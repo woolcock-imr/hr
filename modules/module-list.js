@@ -23,8 +23,10 @@
             task_unikey_table:"new-starter-task-unikey",
             task_access_card_module:prefix+'new-starter-task-access-card',
             task_access_card_table:"new-starter-task-access-card",
-            follow_up_module:prefix+'new-starter-follow-up-data',
-            follow_up_table:"new-starter-follow-up",
+            task_computer_module:prefix+'new-starter-task-computer',
+            task_computer_table:"new-starter-task-computer",
+            notes_module:prefix+'new-starter-notes-data',
+            notes_table:"new-starter-notes",
             
             description:"New starter records",
             router:1,
@@ -46,18 +48,29 @@
             Table:"new-starter-task-access-card",
             parent_table:"new-starter"
         },
-        "new-starter-follow-up-data":{
-            url:$H+"/new-starter/follow-up/data.html",
-            Table:"new-starter-follow-up",
-            form_module:"new-starter-follow-up-form", 
+        "new-starter-task-computer":{
+            url:$H+"/new-starter/task-forms/computer.html",
+            Table:"new-starter-task-computer",
+            parent_table:"new-starter"
+        },
+        "new-starter-notes-data":{
+            url:$H+"/new-starter/notes/data.html",
+            Table:"new-starter-notes",
+            form_module:"new-starter-notes-form", 
             parent_table:"new-starter",
             description:"Communal ordering data"
         },
-        "new-starter-follow-up-form":{
-            url:$H+"/new-starter/follow-up/form.html",
-            Table:"new-starter-follow-up",
+        "new-starter-notes-form":{
+            url:$H+"/new-starter/notes/form.html",
+            Table:"new-starter-notes",
             parent_table:"new-starter",
             description:"Communal ordering form",
+        },
+        "new-starter-diagram":{
+            title:"Communal ordering diagram",
+            url:$H+"/new-starter/diagram/diagram.html",
+            description:"New starter diagram",
+            router:1,
         },
     }
     set_prefix(prefix,modules);

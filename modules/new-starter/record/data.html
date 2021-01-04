@@ -10,9 +10,11 @@
             First_Name, 
             Last_Name, 
             UniKey|UniKey_Task,
-            Access_Card
+            Access_Card,
+            Computer,
+            Status
         `;
-        m.fields="_Form,_Record_ID,"+fields+",_Follow_Up,Submit_date,Submitted_by,_Delete";
+        m.fields="_Form,_Record_ID,"+fields+",_Notes,Submit_date,Submitted_by,_Delete";
         //-------------------------------------
         m.cell_render=function(records,I,field,td){
             switch(field){
@@ -20,27 +22,57 @@
                     td.html(records[I].UID);
                     break;
                 case 'UniKey_Task':
-                    if(records[I].Data[field]=='off')  td.html("<span style='color:#aaa'>Not required</span>");
-                    if(records[I].Data[field]=='on'){
-                        td.html("<u style='cursor:pointer;color:#c54609'>Required</u>");
-                        td.find('u').on('click',function(){
-                            $vm.show_module(m.task_unikey_module,{UID:records[I].UID, goback:1});
-                        });
+                    if(records[I].Data.Status=='Submit'){
+                        if(records[I].Data[field]=='off')  td.html("<span style='color:#aaa'>Not required</span>");
+                        if(records[I].Data[field]=='on'){
+                            td.html("<u style='cursor:pointer;color:#c54609'>Required</u>");
+                            td.find('u').on('click',function(){
+                                $vm.show_module(m.task_unikey_module,{UID:records[I].UID, goback:1});
+                            });
+                        }
+                    }
+                    else{
+                        if(records[I].Data[field]=='on'){
+                            td.html("Required");
+                        }
                     }
                     break;
                 case 'Access_Card':
-                    if(records[I].Data[field]=='off')  td.html("<span style='color:#aaa'>Not required</span>");
-                    if(records[I].Data[field]=='on'){
-                        td.html("<u style='cursor:pointer;color:#c54609'>Required</u>");
-                        td.find('u').on('click',function(){
-                            $vm.show_module(m.task_access_card_module,{UID:records[I].UID, goback:1});
-                        });
+                    if(records[I].Data.Status=='Submit'){
+                        if(records[I].Data[field]=='off')  td.html("<span style='color:#aaa'>Not required</span>");
+                        if(records[I].Data[field]=='on'){
+                            td.html("<u style='cursor:pointer;color:#c54609'>Required</u>");
+                            td.find('u').on('click',function(){
+                                $vm.show_module(m.task_access_card_module,{UID:records[I].UID, goback:1});
+                            });
+                        }
+                    }
+                    else{
+                        if(records[I].Data[field]=='on'){
+                            td.html("Required");
+                        }
                     }
                     break;
-                case '_Follow_Up':
-                    td.html("<u style='cursor:pointer'>Follow Up</u>");
+                case 'Computer':
+                    if(records[I].Data.Status=='Submit'){
+                        if(records[I].Data[field]=='off')  td.html("<span style='color:#aaa'>Not required</span>");
+                        if(records[I].Data[field]=='on'){
+                            td.html("<u style='cursor:pointer;color:#c54609'>Required</u>");
+                            td.find('u').on('click',function(){
+                                $vm.show_module(m.task_computer_module,{UID:records[I].UID, goback:1});
+                            });
+                        }
+                    }
+                    else{
+                        if(records[I].Data[field]=='on'){
+                            td.html("Required");
+                        }
+                    }
+                    break;
+                case '_Notes':
+                    td.html("<u style='cursor:pointer'>Notes</u>");
                     td.find('u').on('click',function(){
-                        $vm.show_module(m.follow_up_module,{UID:records[I].UID,goback:1})
+                        $vm.show_module(m.notes_module,{UID:records[I].UID,goback:1})
                     });
                     break;
             }
@@ -71,7 +103,7 @@
                 $("#grid__ID td[data-id=UniKey_Task]").each(function(index){
                     if(m.records[index].sys_temp_1!=undefined){
                         var t="Done by "+m.records[index].sys_temp_1.Submitted_by+" on "+new Date(m.records[index].sys_temp_1.Submit_date).toLocaleDateString();
-                        $(this).html("<i rid="+index+" style='color:green;padding-left:10px' class='fas fa-check' title='"+t+"'></i>");
+                        $(this).html("<i rid="+index+" style='color:green;padding-left:10px;cursor:pointer' class='fas fa-check' title='"+t+"'></i>");
                         $(this).find('i').on('click',function(){
                             var k=parseInt($(this).attr('rid'));
                             $vm.show_module(m.task_unikey_module,{record:m.records[k].sys_temp_1});
@@ -98,7 +130,7 @@
                 $("#grid__ID td[data-id=Access_Card]").each(function(index){
                     if(m.records[index].sys_temp_2!=undefined){
                         var t="Done by "+m.records[index].sys_temp_2.Submitted_by+" on "+new Date(m.records[index].sys_temp_2.Submit_date).toLocaleDateString();
-                        $(this).html("<i rid="+index+" style='color:green;padding-left:10px' class='fas fa-check' title='"+t+"'></i>");
+                        $(this).html("<i rid="+index+" style='color:green;padding-left:10px;cursor:pointer' class='fas fa-check' title='"+t+"'></i>");
                         $(this).find('i').on('click',function(){
                             var k=parseInt($(this).attr('rid'));
                             $vm.show_module(m.task_access_card_module,{record:m.records[k].sys_temp_2});
@@ -109,25 +141,25 @@
             //--------------------------------------------------------
             var cmd="group"; //find follow up
             var pipeline=[{ $group : {_id:"$I2", count:{$sum:1}}}];
-            var req={cmd:cmd,table:m.follow_up_table,pipeline:pipeline}
+            var req={cmd:cmd,table:m.notes_table,pipeline:pipeline}
             $vm.request(req,function(res){
                 //console.log(res.result)
                 if(res.result.length!=undefined){
                     for(var k=0;k<res.result.length;k++){
                         for(var j=0;j<m.records.length;j++){
                             if(m.records[j].UID==res.result[k]._id){
-                                m.records[j].sys_follow_up=res.result[k];
+                                m.records[j].sys_notes=res.result[k];
                                 break;
                             }
                         }
                     }
                 }
                 //rendering the Follow up column
-                $("#grid__ID td[data-id=_Follow_Up]").each(function(index){
-                    if(m.records[index].sys_follow_up!=undefined){
-                        $(this).html("<u style='cursor:pointer'>"+m.records[index].sys_follow_up.count+"</u>");
+                $("#grid__ID td[data-id=_Notes]").each(function(index){
+                    if(m.records[index].sys_notes!=undefined){
+                        $(this).html("<u style='cursor:pointer'>"+m.records[index].sys_notes.count+"</u>");
                         $(this).find('u').on('click',function(){
-                            $vm.show_module(m.follow_up_module,{UID:m.records[index].UID})
+                            $vm.show_module(m.notes_module,{UID:m.records[index].UID})
                         })
                     }
                 });

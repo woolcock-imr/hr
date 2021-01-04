@@ -50,15 +50,20 @@
 					<ul style='list-style-type:none'>
 						<li><label class=c__ID><input type="checkbox" name=UniKey_Task  /><span></span> UniKey</label></li>						
 						<li><label class=c__ID><input type="checkbox" name=Access_Card  /><span></span> Access Card</label></li>
+						<li><label class=c__ID><input type="checkbox" name=Computer  /><span></span> Computer</label></li>
 					</ul>
 				</div>
 			</div>
+			<section style='display:none'>
+				<input type="text" name=Status  />
+			</section>
 			<div>
 				<div w='100|100'>
-					<button id=submit__ID >Submit</button>
+					<button id=draft__ID type="button" class="btn btn-secondary">Save and Return Later</button>
+					<button id=submit__ID type="button" class="btn btn-secondary">Submit</button>
+					<button id=trigger__ID style='display:none'></button>
 				</div>
 			</div>
-
     	</form>
     </section>
 	VmInclude:__COMPONENT__/m/model.01.html
@@ -68,6 +73,29 @@
 			VmInclude:__COMPONENT__/f/form.01.js
 			new ResizeObserver($vm.responsive).observe(form_container__ID);
 			m.storage_type='s0';
+			//-------------------------------------
+			$('#draft__ID').on('click',function(){	$("#F__ID input[name='Status']").val('Draft');  m.options.lock=0; $('#trigger__ID').trigger( "click" ); })
+			$('#submit__ID').on('click',function(){	$("#F__ID input[name='Status']").val('Submit'); m.options.lock=1; $('#trigger__ID').trigger( "click" ); })
+			//-------------------------------------
+			m.after_insert=function(data,res){
+				if(data.Status=='Submit'){
+					/*
+					var req={cmd:'flow',flowid:'flow_lab_order_submitted',data:data}
+					$vm.request(req,function(res){
+					*/
+						$vm.refresh=1;
+						m.change_status++;
+						if(m.input.goback!=undefined) window.history.go(-1);            //from grid
+						else $vm.alert('Your data has been successfully submitted');    //standalone
+					//});
+				}
+				else{
+					$vm.refresh=1;
+					m.change_status++;
+					if(m.input.goback!=undefined) window.history.go(-1);            //from grid
+					else $vm.alert('Your data has been successfully saved');    //standalone
+				}
+			}
 			//-------------------------------------
 		}
     </script>
