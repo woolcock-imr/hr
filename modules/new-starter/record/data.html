@@ -8,18 +8,17 @@
         //-------------------------------------
         var fields=`
             First_Name, 
-            Last_Name, 
-            UniKey|UniKey_Task,
-            Access_Card,
-            Computer,
-            Status
+            Last_Name
         `;
-        m.fields="_Form,_Record_ID,"+fields+",_Notes,Submit_date,Submitted_by,_Delete";
+        m.fields="_Form,_Record_ID,"+fields+",Submit_date,Submitted_by,_Delete,Status,_Notes,UniKey|UniKey_Task,Access_Card,Computer";
         //-------------------------------------
         m.cell_render=function(records,I,field,td){
             switch(field){
                 case '_Record_ID':
                     td.html(records[I].UID);
+                    break;
+                case "_Delete":
+                    if(records[I].Data.Status=='Submit') td.html('');
                     break;
                 case 'UniKey_Task':
                     if(records[I].Data.Status=='Submit'){
@@ -34,6 +33,9 @@
                     else{
                         if(records[I].Data[field]=='on'){
                             td.html("Required");
+                        }
+                        else if(records[I].Data[field]=='off'){
+                            td.html("");
                         }
                     }
                     break;
@@ -51,6 +53,9 @@
                         if(records[I].Data[field]=='on'){
                             td.html("Required");
                         }
+                        else if(records[I].Data[field]=='off'){
+                            td.html("");
+                        }
                     }
                     break;
                 case 'Computer':
@@ -67,10 +72,13 @@
                         if(records[I].Data[field]=='on'){
                             td.html("Required");
                         }
+                        else if(records[I].Data[field]=='off'){
+                            td.html("");
+                        }
                     }
                     break;
                 case '_Notes':
-                    td.html("<u style='cursor:pointer'>Notes</u>");
+                    td.html("<u style='cursor:pointer'>Notes (0)</u>");
                     td.find('u').on('click',function(){
                         $vm.show_module(m.notes_module,{UID:records[I].UID,goback:1})
                     });
@@ -102,7 +110,7 @@
                 //rendering the Approved_by column
                 $("#grid__ID td[data-id=UniKey_Task]").each(function(index){
                     if(m.records[index].sys_temp_1!=undefined){
-                        var t="Done by "+m.records[index].sys_temp_1.Submitted_by+" on "+new Date(m.records[index].sys_temp_1.Submit_date).toLocaleDateString();
+                        var t="Processed by "+m.records[index].sys_temp_1.Submitted_by+" on "+new Date(m.records[index].sys_temp_1.Submit_date).toLocaleDateString();
                         $(this).html("<i rid="+index+" style='color:green;padding-left:10px;cursor:pointer' class='fas fa-check' title='"+t+"'></i>");
                         $(this).find('i').on('click',function(){
                             var k=parseInt($(this).attr('rid'));
@@ -154,10 +162,10 @@
                         }
                     }
                 }
-                //rendering the Follow up column
+                //rendering the Notes column
                 $("#grid__ID td[data-id=_Notes]").each(function(index){
                     if(m.records[index].sys_notes!=undefined){
-                        $(this).html("<u style='cursor:pointer'>"+m.records[index].sys_notes.count+"</u>");
+                        $(this).html("<u style='cursor:pointer'>Notes ("+m.records[index].sys_notes.count+")</u>");
                         $(this).find('u').on('click',function(){
                             $vm.show_module(m.notes_module,{UID:m.records[index].UID})
                         })

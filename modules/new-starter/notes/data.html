@@ -19,6 +19,25 @@
             $vm.show_module(m.prefix+m.form_module,{UID:m.input.UID,A:m.input.A,goback:1});
         }
         //-------------------------------------
+        m.cell_render=function(records,I,field,td){
+            switch(field){
+                case 'Contents':
+                    var c=records[I].Data[field];
+                    if(c!=undefined){
+                        c=c.replace(/<div>/g,'@#@%1');
+                        c=c.replace(/<\/div>/g,'@#@%2');
+                        c=c.replace(/<img/g,'@#@%3');
+                        c=$vm.text(c);
+                        c=c.replace(/@#@%1/g,'<div>');
+                        c=c.replace(/@#@%2/g,'</div>');
+                        c=c.replace(/@#@%3/g,'<img');
+                        td.html(c);
+                    }
+                    td.css('min-width','800px');
+                    td.css('padding','6px');
+                    break;
+            }
+        }
     }
 </script>
 <style>
