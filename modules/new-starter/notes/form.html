@@ -7,7 +7,6 @@
 			<div>
 				<div w='100|100'>
 					<span>Contents</span>
-					<!--<textarea name=Contents style='height:300px'></textarea>-->
 					<div id=Contents__ID name=Contents contenteditable="true" style='min-height:300px'></div>
 				</div>
 			</div>
@@ -32,14 +31,7 @@
 				old_m_load();
 				if(m.input && m.input.record){
 					var c=m.input.record.Data.Contents;
-					c=c.replace(/<div>/g,'@#@%1');
-					c=c.replace(/<\/div>/g,'@#@%2');
-					c=c.replace(/<img/g,'@#@%3');
-					c=$vm.text(c);
-					c=c.replace(/@#@%1/g,'<div>');
-					c=c.replace(/@#@%2/g,'</div>');
-					c=c.replace(/@#@%3/g,'<img');
-					$('#F__ID div[name=Contents]').html(c);
+					$('#F__ID div[name=Contents]').html($vm.contenteditable_filter(c));
 				}
 			}
             m.before_submit=function(data,index){
@@ -52,46 +44,8 @@
             }
 			//-------------------------------------
 			var dom=document.getElementById("Contents__ID");
-			dom.onpaste = (e) => {
-				/*
-			let cbPayload = [...(e.clipboardData || e.originalEvent.clipboardData).items];     // Capture the ClipboardEvent's eventData payload as an array
-				cbPayload = cbPayload.filter(i => /image/.test(i.type));                       // Strip out the non-image bits
-			
-			//if(!cbPayload.length || cbPayload.length === 0) return false;                      // If no image was present in the collection, bail.
-			
-			let reader = new FileReader();                                                     // Instantiate a FileReader...
-			reader.onload = (e) =>{
-				//contentTarget.innerHTML = `<img src="${e.target.result}">`; // ... set its onLoad to render the event target's payload
-				console.log(e.target.result)
-			}
-			reader.readAsDataURL(cbPayload[0].getAsFile());                                    // ... then read in the pasteboard image data as Base64
-				*/
-
-				var c=e.target.result;
-console.log(e)				
-console.log(e.clipboardData.getData("text"))				
-
-/*
-
-				c=c.replace(/<img/g,'@#@%3');
-				c=$vm.text(c);
-				c=c.replace(/@#@%3/g,'<img');
-alert(c);				
-				var sel, range;
-				if (window.getSelection) {
-					sel = window.getSelection();
-					if (sel.getRangeAt && sel.rangeCount) {
-						range = sel.getRangeAt(0);
-						range.deleteContents();
-						range.insertNode( document.createTextNode(c) );
-					}
-				} else if (document.selection && document.selection.createRange) {
-					document.selection.createRange().text = c;
-				}
-				*/
-			};
-			//-------------------------------------
-    	}
+			dom.onpaste=$vm.onpaste;
+		}
     </script>
     <style>
         #form_container__ID{

@@ -13,6 +13,10 @@
     var prefix='';
     var $H=$vm.hosting_path+"/modules";
     var modules={
+        "management":{
+            url:$H+"/panels/management.html",
+            description:"panel"
+        },
         "new-starter-data":{
             title:"New starter records",
             url:$H+"/new-starter/record/data.html",

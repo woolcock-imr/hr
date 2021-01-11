@@ -74,6 +74,14 @@
 			new ResizeObserver($vm.responsive).observe(form_container__ID);
 			m.storage_type='s0';
 			//-------------------------------------
+			var old_m_load=m.load;
+			m.load=function(){
+				old_m_load();
+				if(m.input.record!=undefined && m.input.record.Data.Status=="Submit"){
+					$('#draft__ID').hide();
+					$('#submit__ID').hide();
+				}
+			}      
 			$('#draft__ID').on('click',function(){	$("#F__ID input[name='Status']").val('Draft');  m.options.lock=0; $('#trigger__ID').trigger( "click" ); })
 			$('#submit__ID').on('click',function(){	$("#F__ID input[name='Status']").val('Submit'); m.options.lock=1; $('#trigger__ID').trigger( "click" ); })
 			//-------------------------------------
